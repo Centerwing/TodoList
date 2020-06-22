@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" content="width=device-width
+    initial-scale=1, user-scalable=no, maximum-scale=1">
+    <!-- Optimize for some moblie devices don't support viewport -->
+    <meta name="HandheldFriendly" content="true">
+    <title>Todo</title>
+    <link rel="stylesheet" href="css/Todo.css">
+    <script src="js/Todo.js"></script>
+</head>
+<body>
+<div id="todo">
+    <header class="header">
+        <h1>Todo List</h1>
+    </header>
+
+    <section class="main">
+        <!-- Add New Item -->
+        <input id="toggle-all" type="checkbox">
+        <input id="new-todo" type="text" placeholder="What needs to be done?" autofocus>
+        <button id="add-btn">+</button>
+        <!-- Show List -->
+        <ul id="todo-list"></ul>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span id="todo-count"></span>
+            <ul id="filters">
+                <li><a class="selected" style="cursor:pointer;">All</a></li>
+                <li><a class="" style="cursor:pointer;">Active</a></li>
+                <li><a class="" style="cursor:pointer;">Completed</a></li>
+            </ul>
+            <button id="clear-completed">Clear completed</button>
+        </footer>
+    </section>
+</div>
+</body>
+</html>
