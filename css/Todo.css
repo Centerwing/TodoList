@@ -30,7 +30,7 @@ h1 {
 #app-title:before, #app-title:after{
     content: "";
     width: 20%;
-    border-top: 1px solid black;
+    border-top: 1px solid lightgrey;
     display: inline-block;
     vertical-align: middle;
 }
@@ -184,7 +184,7 @@ label[for='toggle-all'] {
     display: block;
     padding: 0;
     width: 100%;
-    max-height: 40rem;
+    max-height: 35rem;
     margin: auto;
     overflow-y: scroll;
     overflow-x: hidden;

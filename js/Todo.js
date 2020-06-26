@@ -60,7 +60,7 @@ function createNewItem(msg, id, state=ACTIVE) {
 
             // left
             if (x_start - x_end > 10){
-                event.preventDefault();
+                // event.preventDefault();
                 let swipe_btns = item.lastChild;
                 swipe_btns.classList.add('swipe-left');
             }
