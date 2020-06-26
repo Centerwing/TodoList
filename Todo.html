@@ -3,35 +3,42 @@
 <head>
     <meta charset="UTF-8" content="width=device-width
     initial-scale=1, user-scalable=no, maximum-scale=1">
+    <!-- Avoid IE to use compatible model -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Optimize for some moblie devices don't support viewport -->
     <meta name="HandheldFriendly" content="true">
+    <!-- Optimize for IOS device -->
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
     <title>Todo</title>
     <link rel="stylesheet" href="css/Todo.css">
     <script src="js/Todo.js"></script>
 </head>
 <body>
-<div id="todo">
+<div id="todo-app">
     <header class="header">
-        <h1>Todo List</h1>
+        <h1 id="title">Todo</h1>
     </header>
 
+    <!-- Add New Item -->
+    <button id="toggle-all">❯</button>
+    <input id="new-todo" type="text" placeholder="What needs to be done?" autofocus>
+    <button id="add-btn">+</button>
+
     <section class="main">
-        <!-- Add New Item -->
-        <input id="toggle-all" type="checkbox">
-        <input id="new-todo" type="text" placeholder="What needs to be done?" autofocus>
-        <button id="add-btn">+</button>
         <!-- Show List -->
-        <ul id="todo-list"></ul>
+            <div id="show-title">
+                <span id="todo-count">no item left</span>
+                <ul id="filters">
+                    <li><a class="selected">All</a></li>
+                    <li><a class="">Active</a></li>
+                    <li><a class="">Completed</a></li>
+                </ul>
+            </div>
+            <ul id="todo-list"></ul>
 
         <!-- Footer -->
         <footer class="footer">
-            <span id="todo-count"></span>
-            <ul id="filters">
-                <li><a class="selected" style="cursor:pointer;">All</a></li>
-                <li><a class="" style="cursor:pointer;">Active</a></li>
-                <li><a class="" style="cursor:pointer;">Completed</a></li>
-            </ul>
-            <button id="clear-completed">Clear completed</button>
+            <button id="clear-completed">Clear Completed</button>
         </footer>
     </section>
 </div>

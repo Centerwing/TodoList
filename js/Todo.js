@@ -30,8 +30,6 @@ function  addTodo(){
         '</div>'
     ].join('');
 
-    let label = item.querySelector('.todo-label');
-
     // Here add event listener
     // label.addEventListener('dbclick', );
     item.querySelector('.toggle').addEventListener('change', function () {
@@ -47,7 +45,7 @@ function  addTodo(){
 }
 
 function updateTodo(item_id, done) {
-    let item = $(item_id);
+    let item = $('#' + item_id);
     if (done) item.classList.add(COMPLETED);
     else item.classList.remove(COMPLETED);
     update();
@@ -63,15 +61,15 @@ function removeTodo(item_id) {
 function clearCompleted() {
     let todo_list = $('#todo-list');
     let items = todo_list.querySelectorAll('li');
-    for (var i = items.length - 1; i >= 0; --i){
-        let item = item[i];
+    for (let i = items.length - 1; i >= 0; --i){
+        let item = items[i];
         if (item.classList.contains(COMPLETED)) todo_list.removeChild(item);
     }
     update();
 }
 
 function update() {
-    let items = $All('.todo-list li');
+    let items = $All('#todo-list li');
     let filter = $('#filters li a.selected').innerHTML;
     let left_num = 0;
     let item, i, display;
@@ -95,18 +93,31 @@ function update() {
     let count = $('#todo-count');
     count.innerHTML = (left_num || 'No') + (left_num > 1 ? ' items' : ' item') + ' left';
 
-    let clear_completed = $('#clear-completed');
-    clear_completed.style.visibility = completed_num > 0 ? 'visible' : 'hidden';
+    // let clear_completed = $('#clear-completed');
+    // clear_completed.style.visibility = completed_num > 0 ? 'visible' : 'hidden';
 
     let toggle_all = $('#toggle-all');
-    toggle_all.style.visibility = items.length > 0 ? 'visible' : 'hidden';
-    toggle_all.checked = items.length === completed_num;
+    // toggle_all.style.visibility = items.length > 0 ? 'visible' : 'hidden';
+    if (items.length === completed_num){
+        toggle_all.classList.add(SELECTED);
+    }
+    else{
+        toggle_all.classList.remove(SELECTED);
+    }
 }
 
 function toggleAll() {
-    let items = $All('.todo-list li');
+    let items = $All('#todo-list li');
     let toggle_all = $('#toggle-all');
-    let checked = toggle_all.checked;
+    let checked;
+    if (toggle_all.classList.contains(SELECTED)){
+        toggle_all.classList.remove(SELECTED);
+        checked = false;
+    }
+    else {
+        toggle_all.classList.add(SELECTED);
+        checked = true;
+    }
     for (let i = 0; i < items.length; ++i) {
         let item = items[i];
         let toggle = item.querySelector('.toggle');
@@ -119,11 +130,24 @@ function toggleAll() {
     update();
 }
 
+function resizeRoot() {
+    let deviceWidth = document.documentElement.clientWidth;  // 获得设备宽度
+    let maxWidth = 750;
+
+    if (deviceWidth > maxWidth) {
+        deviceWidth = maxWidth;
+    }
+    document.documentElement.style.fontSize = deviceWidth / 35 + "px";
+}
+
 window.onload = function init(){
+    // resize
+    resizeRoot();
+
     // add button
     let add_btn = $('#add-btn');
     add_btn.addEventListener('click', function () {
-
+        addTodo();
     })
 
     // clear button
@@ -134,7 +158,7 @@ window.onload = function init(){
 
     // select all button
     let toggle_all = $('#toggle-all');
-    toggle_all.addEventListener('change', function () {
+    toggle_all.addEventListener('click', function () {
         toggleAll();
     })
 
@@ -151,6 +175,9 @@ window.onload = function init(){
             }, false);
         })(filters[i])
     }
-
     update();
 }
+
+window.onresize = function () {
+    resizeRoot();
+};
