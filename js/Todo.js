@@ -16,7 +16,7 @@ const ACTIVE = 'active';
 
 function createNewItem(msg, id, state=ACTIVE) {
     if (msg === ''){
-        return;
+        return null;
     }
 
     let todo_list = $('#todo-list');
@@ -60,7 +60,7 @@ function createNewItem(msg, id, state=ACTIVE) {
 
             // left
             if (x_start - x_end > 10){
-                event.stopPropagation();
+                event.preventDefault();
                 let swipe_btns = item.lastChild;
                 swipe_btns.classList.add('swipe-left');
             }
@@ -114,6 +114,8 @@ function addTodo(){
     let new_todo = $('#new-todo')
     let msg = new_todo.value;
 
+    if (msg === '') return;
+
     // store in model
     let new_item = {msg:msg, state:ACTIVE};
     model.data.items.push(new_item);
@@ -124,19 +126,16 @@ function addTodo(){
 }
 
 function updateTodo(item_id) {
-    let item = $('#' + item_id);
+    let items = model.data.items;
     let id = item_id[item_id.length-1];
-    let toggle = item.querySelector('.toggle');
-    if (item.classList.contains(COMPLETED)){
+    if (items[id].state === COMPLETED){
         model.data.items[id].state = ACTIVE;
-        item.classList.remove(COMPLETED);
-        toggle.classList.remove(SELECTED);
     }
     else {
         model.data.items[id].state = COMPLETED;
-        item.classList.add(COMPLETED);
-        toggle.classList.add(SELECTED);
     }
+    model.flush();
+    update();
 }
 
 function removeTodo(item_id) {
@@ -185,7 +184,7 @@ function update() {
 
             display = '';
         }
-        new_item.style.display = display;
+        if (new_item !== null) new_item.style.display = display;
     }
 
     let completed_num = items.length - left_num;
@@ -277,14 +276,22 @@ window.onload = function init(){
 
     // add button
     let add_btn = $('#add-btn');
-    add_btn.addEventListener('click', function () {
+    add_btn.addEventListener('touchstart', function () {
         addTodo();
+        add_btn.classList.add('press-down');
+    })
+    add_btn.addEventListener('touchend', function () {
+        add_btn.classList.remove('press-down');
     })
 
     // clear button
     let clear_completed = $('#clear-btn');
-    clear_completed.addEventListener('click', function(){
+    clear_completed.addEventListener('touchstart', function() {
         clearCompleted();
+        clear_completed.classList.add('press-down');
+    })
+    clear_completed.addEventListener('touchend', function () {
+        clear_completed.classList.remove('press-down');
     })
 
     // select all button

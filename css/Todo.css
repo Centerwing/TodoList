@@ -96,6 +96,11 @@ label[for='toggle-all'] {
     color: lightgrey;
 }
 
+#new-todo:focus{
+    outline: 0.1rem solid darkgrey;
+    border-radius: 0;
+}
+
 #add-btn {
     width: 2.5rem;
     height: 2.5rem;
@@ -104,13 +109,22 @@ label[for='toggle-all'] {
     margin-left: 0.5rem;
     background: darkgrey;
     border-radius: 100%;
-    border: 0;
+    border: 0.1rem solid darkgrey;
     color: white;
     font-size: 1.6rem;
     vertical-align: bottom;
     text-align: center;
     display: inline-block;
     position: relative;
+}
+
+#add-btn:focus{
+    outline: 0;
+}
+
+#add-btn.press-down{
+    background-color: white;
+    color: darkgrey;
 }
 
 /************************  show-title *************************/
@@ -239,6 +253,11 @@ label[for='toggle-all'] {
     font: 1.4rem "Lucida Console", Monaco, monospace;
 }
 
+.item-content:focus{
+    outline: 0.1rem solid darkgrey;
+    border-radius: 0;
+}
+
 .swipe-left{
     -webkit-transform: translateX(-105%);
     transform: translateX(-105%);
@@ -260,6 +279,7 @@ label[for='toggle-all'] {
     display: inline-block;
     width: 50%;
     color: lightgrey;
+    font-weight: bold;
 }
 
 /************************ footer *************************/
@@ -272,5 +292,14 @@ label[for='toggle-all'] {
     color: white;
     border: 0.1rem solid darkgrey;
     border-radius: 0.3rem;
+}
+
+#clear-btn:focus{
+    outline: 0;
+}
+
+#clear-btn.press-down{
+    background-color: white;
+    color: darkgrey;
 }
 
