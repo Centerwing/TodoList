@@ -1,45 +1,47 @@
-html, body {
+body {
     margin: 0;
     padding: 0;
     text-align: center;
-    font: 14px "Lucida Console", Monaco, monospace;
-}
-
-body {
-    line-height: 1.4em;
-    background: #f5f5f5;
-    color: #4d4d4d;
-    min-width: 230px;
-    max-width: 550px;
-    margin: 0 auto;
+    background: white;
+    color: darkgrey;
+    font: 1.4rem "Lucida Console", Monaco, monospace;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-weight: 300;
 }
 
 #todo-app {
-    width: 90%;
     margin: auto;
+    background: #fff;
+    position: relative;
 }
 
-#title{
-    font-family: "Lucida Console", Monaco, monospace;
+/************************  header *************************/
+
+h1 {
+    width: 100%;
+    padding: 0;
+    margin-bottom: 0.6rem;
+    font-size: 4rem;
     text-align: center;
+    text-transform: uppercase;
+    color: darkgrey;
 }
 
-#title:before, #title:after{
+#app-title:before, #app-title:after{
     content: "";
-    width: 30%;
+    width: 20%;
     border-top: 1px solid black;
     display: inline-block;
     vertical-align: middle;
 }
-#title:before{
-    margin-right: 10px;
+#app-title:before{
+    margin-right: 1rem;
 }
-#title:after{
-    margin-left: 10px;
+#app-title:after{
+    margin-left: 1rem;
 }
+
+/************************  main *************************/
 
 .main {
     width: 32.4rem;
@@ -48,7 +50,7 @@ body {
     z-index: 2;
 }
 
-/******** add new item *********/
+/*** add-new-item ***/
 label[for='toggle-all'] {
     display: none;
 }
@@ -57,21 +59,21 @@ label[for='toggle-all'] {
     margin-right: 0.5rem;
     display: inline-block;
     position: relative;
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     vertical-align: bottom;
-    border: rgba(175, 47, 47, 0.5) 0.2rem solid;
-    background-color: white;
-    border-radius: 100%;
     left: 0.6rem;
 }
 
-#toggle-all.completed::after {
-    content: '✔';
-    color: rgba(175, 47, 47, 0.5);
-    font-size: 2rem;
-    text-align: center;
-    line-height: 2rem;
+#toggle-all::before {
+    content: '❯';
+    font-size: 22px;
+    color: lightgrey;
+    padding: 0.2rem 0.2rem 0.2rem 0.2rem;
+}
+
+#add-new-item .selected::before {
+    color: darkgrey;
 }
 
 #new-todo {
@@ -81,8 +83,8 @@ label[for='toggle-all'] {
     padding: 0 0.8rem;
     line-height: 3.2rem;
     font-size: 1.6rem;
-    color: #555;
-    border: rgba(175, 47, 47, 0.2) 0.1rem solid;
+    color: lightgrey;
+    border: grey 0.1rem solid;
     border-radius: 0.5rem;
     display: inline-block;
     position: relative;
@@ -91,26 +93,27 @@ label[for='toggle-all'] {
 
 #new-todo::placeholder {
     font-style: italic;
-    font-weight: 100;
-    color: #e6e6e6;
+    color: lightgrey;
 }
 
 #add-btn {
     width: 2.5rem;
     height: 2.5rem;
+    left: -0.5rem;
+    bottom: -0.1rem;
     margin-left: 0.5rem;
-    background: rgba(175, 47, 47, 0.5);
+    background: darkgrey;
     border-radius: 100%;
+    border: 0;
     color: white;
     font-size: 1.6rem;
     vertical-align: bottom;
     text-align: center;
     display: inline-block;
     position: relative;
-    left: -0.8rem;
 }
 
-/******** show list *********/
+/************************  show-title *************************/
 
 #show-list {
     width: 80%;
@@ -134,160 +137,79 @@ label[for='toggle-all'] {
 #todo-count {
     float: left;
     text-align: left;
-    margin-right: 0.2rem;
 }
 
 #filters {
-    margin: 0 2.5rem 0 7.5rem;
+    margin: 0 0 0 11.5rem;
     padding: 0;
     list-style: none;
     position: absolute;
-    right: 0;
-    left: 0;
 }
 
 #filters li {
-    float: right;
     display: inline;
 }
 
 #filters li a {
-    margin: 0.2rem 0.1rem;
-    padding: 0 0.2rem;
+    margin: 0;
+    padding: 0;
     text-decoration: none;
-    border: 0.1rem solid transparent;
+    border: 0.2rem solid white;
     border-radius: 0.3rem;
 }
 
 #filters li a.selected {
-    border-color: rgba(175, 47, 47, 0.5);
+    background-color: darkgrey;
+    border-color: darkgrey;
+    color: white;
 }
 
-/******** items refer to example *********/
+/************************ todolist *************************/
 
 #todo-list {
     display: block;
-    width: 100%;
-    max-height: 20rem;
-    margin: 0;
     padding: 0;
-    list-style: none;
+    width: 100%;
+    max-height: 40rem;
+    margin: auto;
     overflow-y: scroll;
     overflow-x: hidden;
     scroll-behavior: smooth;
+    list-style: none;
 }
 
 #todo-list li {
     position: relative;
-    font-size: 24px;
-    border-bottom: 1px solid #ededed;
-}
-
-#todo-list li:last-child {
-    border-bottom: none;
-}
-
-#todo-list li.editing {
-    border-bottom: none;
-    padding: 0;
-}
-
-#todo-list li.editing .edit {
-    display: block;
-    width: 506px;
-    padding: 13px 17px 12px 17px;
-    margin: 0 0 0 43px;
-}
-
-#todo-list li.editing .view {
-    display: none;
+    width: 130%;
+    height: 4rem;
+    line-height: 4rem;
+    margin: auto;
+    box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.05);
+    vertical-align: bottom;
+    overflow: hidden;
+    z-index: 1;
 }
 
 #todo-list li .toggle {
-    text-align: center;
-    width: 40px;
-    height: auto;
-    top: 0;
-    bottom: 0;
-    border: none; /* Mobile Safari */
-    -webkit-appearance: none;
-    appearance: none;
-}
-
-#todo-list li .toggle:after {
-    content: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23ededed%22%20stroke-width%3D%223%22/%3E%3C/svg%3E');
-    /* content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="-10 -18 100 135"><circle cx="50" cy="50" r="50" fill="none" stroke="#ededed" stroke-width="3"/></svg>'); */
-}
-
-#todo-list li .toggle:checked:after {
-    content: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23bddad5%22%20stroke-width%3D%223%22/%3E%3Cpath%20fill%3D%22%235dc2af%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22/%3E%3C/svg%3E');
-}
-
-#todo-list li label {
-    white-space: pre-line;
-    word-break: break-all;
-    padding: 15px 60px 15px 15px;
-    margin-left: 45px;
-    display: block;
-    line-height: 1.2;
-    transition: color 0.4s;
-}
-
-#todo-list li.completed label {
-    color: #d9d9d9;
-    text-decoration: line-through;
-}
-
-#todo-list li .destroy {
-    display: none;
-    position: absolute;
-    top: 0;
-    right: 10px;
-    bottom: 0;
-    width: 40px;
-    height: 40px;
-    margin: auto 0;
-    font-size: 30px;
-    color: #cc9a9a;
-    margin-bottom: 11px;
-    transition: color 0.2s ease-out;
-}
-
-#todo-list li .destroy:hover {
-    color: #af5b5e;
-}
-
-#todo-list li .destroy:after {
-    content: '×';
-}
-
-#todo-list li:hover .destroy {
-    display: block;
-}
-
-#todo-list li .edit {
-    display: none;
-}
-
-#todo-list li .editing:last-child {
-    margin-bottom: -1px;
-}
-
-.toggle {
     width: 2rem;
     height: 2rem;
     float: left;
     text-align: center;
     line-height: 2rem;
-    border: rgba(175, 47, 47, 0.5) 0.1rem solid;
-    margin: 1.5rem 1rem;
-    vertical-align: bottom;
+    border: darkgrey 0.1rem solid;
     border-radius: 100%;
+    margin: 1.2rem 1rem;
+    vertical-align: bottom;
+    color: white;
 }
 
-#todo-list li .completed .item-toggle::after {
-    color: rgba(175, 47, 47, 0.5);
-    content: '✔';
+#todo-list li .selected{
+    background-color: darkgrey;
+}
+
+#todo-list li.completed .todo-label {
+    color: #d9d9d9;
+    text-decoration: line-through;
 }
 
 .todo-label {
@@ -296,22 +218,59 @@ label[for='toggle-all'] {
     line-height: 4rem;
     margin: 0.5rem 0;
     min-width: 15.5rem;
-    width: 46%;
+    width: 40%;
     text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/*************  footer ***************/
+.item-content {
+    float: left;
+    width: 60%;
+    height: 3rem;
+    line-height: 4rem;
+    margin: 0.5rem 0;
+    min-width: 15.5rem;
+    text-align: left;
+    border: lightgrey 0.1rem solid;
+    border-radius: 0.5rem;
+    color: darkgrey;
+    font: 1.4rem "Lucida Console", Monaco, monospace;
+}
 
-#clear-completed {
-    clear: top;
-    color: #777;
+.swipe-left{
+    -webkit-transform: translateX(-105%);
+    transform: translateX(-105%);
+}
+
+.swipe-btns{
+    float: right;
+    width: 22%;
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 1.8rem;
+    display: block;
+    -webkit-transition: all 0.4s linear;
+    transition: all 0.4s linear;
+}
+
+.del-btn, .top-btn{
+    position: relative;
+    display: inline-block;
+    width: 50%;
+    color: lightgrey;
+}
+
+/************************ footer *************************/
+
+#clear-btn {
     margin: 2rem;
     padding: 0.2rem 1.5rem;
     font-size: 1.2rem;
-    background: rgba(177, 107, 107, 0.1);
-    border: 0.1rem solid rgba(175, 47, 47, 0.3);
-    border-radius: 0.5rem;
+    background: darkgrey;
+    color: white;
+    border: 0.1rem solid darkgrey;
+    border-radius: 0.3rem;
 }
+

@@ -5,14 +5,16 @@ const $All = function (sel) {
     return document.querySelectorAll(sel);
 };
 
+var model = window.model;
+
+var LastTouchTime = new Date().getTime();
+
 const COMPLETED = 'completed';
 const SELECTED = 'selected' ;
 const EDITING = 'editing';
-let item_id = 0;
+const ACTIVE = 'active';
 
-function  addTodo(){
-    let new_todo = $('#new-todo')
-    let msg = new_todo.value;
+function createNewItem(msg, id, state=ACTIVE) {
     if (msg === ''){
         return;
     }
@@ -20,80 +22,177 @@ function  addTodo(){
     let todo_list = $('#todo-list');
 
     let item = document.createElement('li');
-    let id = 'item' + item_id++;
-    item.setAttribute('id', id);
+    let item_id = 'item' + id;
+    item.setAttribute('id', item_id);
     item.innerHTML = [
-        '<div class="view">',
-        '  <input class="toggle" type="checkbox">',
-        '  <label class="todo-label">' + msg + '</label>',
-        '  <button class="destroy"></button>',
-        '</div>'
+        '<div class="toggle">✔</div>',
+        '<label class="todo-label">' + msg + '</label>',
+        //'  <button class="destroy"></button>',
     ].join('');
 
+    // change to completed
+    if(state === COMPLETED){
+        item.classList.add(COMPLETED);
+        item.querySelector('.toggle').classList.add(SELECTED);
+    }
+
     // Here add event listener
-    // label.addEventListener('dbclick', );
-    item.querySelector('.toggle').addEventListener('change', function () {
-        updateTodo(id, this.checked);
+    item.querySelector('.toggle').addEventListener('click', function () {
+        updateTodo(item_id);
     })
-    item.querySelector('.destroy').addEventListener('click', function () {
-        removeTodo(id);
+    item.querySelector('.todo-label').addEventListener('click', function () {
+        editItem(item_id);
     })
+    createSwipeBtns();
+    addSwipeListener()
+    //item.querySelector('.destroy').addEventListener('click', function () {
+    //    removeTodo(id);
+    //})
+
+    // swipe operations
+    function addSwipeListener() {
+        let x_start, x_end;
+        item.addEventListener('touchstart', function (event) {
+            x_start = event.changedTouches[0].pageX;
+        })
+        item.addEventListener('touchmove', function (event) {
+            x_end = event.changedTouches[0].pageX;
+
+            // left
+            if (x_start - x_end > 10){
+                event.stopPropagation();
+                let swipe_btns = item.lastChild;
+                swipe_btns.classList.add('swipe-left');
+            }
+            // right
+            if (x_end - x_start > 10){
+                event.stopPropagation();
+                let swipe_btns = item.lastChild;
+                if (swipe_btns.classList.contains('swipe-left')){
+                    swipe_btns.classList.remove('swipe-left');
+                }
+            }
+        })
+    }
+
+    function createSwipeBtns(){
+        let del_btn = document.createElement('div');
+        del_btn.innerHTML = 'X';
+        del_btn.classList.add('del-btn');
+        del_btn.addEventListener('click', function () {
+            removeTodo(item_id);
+        })
+
+        // top button, remove and push a new item
+        let top_btn = document.createElement('div');
+        top_btn.innerHTML = '↑';
+        top_btn.classList.add('top-btn');
+        top_btn.addEventListener('click', function () {
+            removeTodo(item_id);
+            let top_item = {msg:msg, state:state};
+            model.data.items.push(top_item);
+            model.flush();
+            update();
+        })
+
+        let swipe_btns = document.createElement('div');
+        swipe_btns.classList.add('swipe-btns');
+        // swipe_btns.classList.add('swipe-left');
+        swipe_btns.appendChild(top_btn);
+        swipe_btns.appendChild(del_btn);
+
+        item.appendChild(swipe_btns);
+    }
 
     todo_list.insertBefore(item, todo_list.firstChild);
-    new_todo.value = '';
-    update();
+
+    // used for display by filters
+    return item;
 }
 
-function updateTodo(item_id, done) {
-    let item = $('#' + item_id);
-    if (done) item.classList.add(COMPLETED);
-    else item.classList.remove(COMPLETED);
+function addTodo(){
+    let new_todo = $('#new-todo')
+    let msg = new_todo.value;
+
+    // store in model
+    let new_item = {msg:msg, state:ACTIVE};
+    model.data.items.push(new_item);
+    model.flush();
+
     update();
+    new_todo.value = '';
+}
+
+function updateTodo(item_id) {
+    let item = $('#' + item_id);
+    let id = item_id[item_id.length-1];
+    let toggle = item.querySelector('.toggle');
+    if (item.classList.contains(COMPLETED)){
+        model.data.items[id].state = ACTIVE;
+        item.classList.remove(COMPLETED);
+        toggle.classList.remove(SELECTED);
+    }
+    else {
+        model.data.items[id].state = COMPLETED;
+        item.classList.add(COMPLETED);
+        toggle.classList.add(SELECTED);
+    }
 }
 
 function removeTodo(item_id) {
-    let todo_list = $('#todo-list');
-    let item = $('#' + item_id);
-    todo_list.removeChild(item);
+    let id = item_id[item_id.length-1];
+    model.data.items.splice(id, 1);
+    model.flush();
     update();
 }
 
 function clearCompleted() {
+    let items = model.data.items;
     let todo_list = $('#todo-list');
-    let items = todo_list.querySelectorAll('li');
     for (let i = items.length - 1; i >= 0; --i){
-        let item = items[i];
-        if (item.classList.contains(COMPLETED)) todo_list.removeChild(item);
+        if(items[i].state === COMPLETED){
+            items.splice(i,1);
+        }
     }
+    model.flush();
     update();
 }
 
 function update() {
-    let items = $All('#todo-list li');
-    let filter = $('#filters li a.selected').innerHTML;
+    let filter = model.data.filter;
+    let items = model.data.items;
+    let list = $('#todo-list');
+    // let items = $All('#todo-list li');
+    // let filter = $('#filters li a.selected').innerHTML;
     let left_num = 0;
     let item, i, display;
 
+    // clear all list items
+    list.innerHTML = '';
+
     for (i = 0; i < items.length; ++i) {
         item = items[i];
-        if (!item.classList.contains(COMPLETED)) left_num++;
+        if (!(item.state === COMPLETED)) left_num++;
+
+        // create new item
+        let new_item = createNewItem(item.msg, i, item.state);
 
         // filters
         display = 'none';
         if (filter === 'All'
-            || (filter === 'Active' && !item.classList.contains(COMPLETED))
-            || (filter === 'Completed' && item.classList.contains(COMPLETED))) {
+            || (filter === 'Active' && !(item.state === COMPLETED))
+            || (filter === 'Completed' && (item.state === COMPLETED))) {
 
             display = '';
         }
-        item.style.display = display;
+        new_item.style.display = display;
     }
 
     let completed_num = items.length - left_num;
     let count = $('#todo-count');
     count.innerHTML = (left_num || 'No') + (left_num > 1 ? ' items' : ' item') + ' left';
 
-    // let clear_completed = $('#clear-completed');
+    // let clear_completed = $('#clear-btn');
     // clear_completed.style.visibility = completed_num > 0 ? 'visible' : 'hidden';
 
     let toggle_all = $('#toggle-all');
@@ -107,7 +206,7 @@ function update() {
 }
 
 function toggleAll() {
-    let items = $All('#todo-list li');
+    let items = model.data.items;
     let toggle_all = $('#toggle-all');
     let checked;
     if (toggle_all.classList.contains(SELECTED)){
@@ -118,16 +217,42 @@ function toggleAll() {
         toggle_all.classList.add(SELECTED);
         checked = true;
     }
+
     for (let i = 0; i < items.length; ++i) {
         let item = items[i];
-        let toggle = item.querySelector('.toggle');
-        if (toggle.checked !== checked) {
-            toggle.checked = checked;
-            if (checked) item.classList.add(COMPLETED);
-            else item.classList.remove(COMPLETED);
-        }
+        if (checked) item.state = COMPLETED;
+        else item.state = ACTIVE;
     }
+    model.flush();
     update();
+}
+
+function editItem(item_id) {
+    // simulate a double-click event
+    if(new Date().getTime() - LastTouchTime > 500){
+        LastTouchTime = new Date().getTime();
+        console.log(LastTouchTime);
+        return;
+    }
+
+    let item = $('#' + item_id);
+    let item_label = item.querySelector('.todo-label');
+    let editBox = document.createElement('input');
+
+    editBox.setAttribute('class','item-content');
+    editBox.setAttribute('type', 'text');
+    editBox.setAttribute('value', item_label.innerHTML);
+
+    editBox.addEventListener('blur', function () {
+        item_label.innerHTML = this.value;
+        let id = item_id[item_id.length-1];
+        model.data.items[id].msg = this.value;
+        model.flush();
+        update();
+        item.removeChild(editBox);
+    })
+    item.replaceChild(editBox, item_label);
+    editBox.focus();
 }
 
 function resizeRoot() {
@@ -141,8 +266,14 @@ function resizeRoot() {
 }
 
 window.onload = function init(){
+    // debug
+    // window.localStorage.clear();
+
     // resize
     resizeRoot();
+
+    // initial data
+    model.init(update);
 
     // add button
     let add_btn = $('#add-btn');
@@ -151,7 +282,7 @@ window.onload = function init(){
     })
 
     // clear button
-    let clear_completed = $('#clear-completed');
+    let clear_completed = $('#clear-btn');
     clear_completed.addEventListener('click', function(){
         clearCompleted();
     })
@@ -171,11 +302,15 @@ window.onload = function init(){
                     filters[j].classList.remove(SELECTED);
                 }
                 filter.classList.add(SELECTED);
+
+                // stored filters data
+                model.data.filter = filter.innerHTML;
+                model.flush();
+
                 update();
             }, false);
         })(filters[i])
     }
-    update();
 }
 
 window.onresize = function () {
