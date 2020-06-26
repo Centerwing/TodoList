@@ -255,7 +255,7 @@ function editItem(item_id) {
 }
 
 function resizeRoot() {
-    let deviceWidth = document.documentElement.clientWidth;  // 获得设备宽度
+    let deviceWidth = document.documentElement.clientWidth;
     let maxWidth = 750;
 
     if (deviceWidth > maxWidth) {
